@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Silver & Black: Fleet Command V1.5.1</title>
+<title>Silver & Black: Fleet Command V1.6</title>
 <style>
   :root {
     /* Raiders Palette: Pitch Black, Brushed Silver, Titanium, White */
@@ -20,6 +20,7 @@
     --status-red: #ef4444;
     --status-amber: #f59e0b;
     --status-blue: #38bdf8;
+    --status-purple: #a855f7;
     
     /* Tier Colors */
     --t0-col: #71717a; --t1-col: #22c55e; --t2-col: #38bdf8; --t3-col: #3b82f6; --t4-col: #8b5cf6; 
@@ -36,51 +37,58 @@
     pointer-events: none; z-index: 1;
   }
 
-  header { flex-shrink: 0; background: #000; border-bottom: 1px solid var(--panel-border); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
+  header { flex-shrink: 0; background: #000; border-bottom: 1px solid var(--panel-border); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; z-index: 10; }
   .header-top { display: flex; justify-content: space-between; align-items: center; }
-  .brand-title { font-size: 16px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
+  .brand-title { font-size: 18px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
   .brand-title span { color: var(--silver-dim); }
 
-  .hud-stats { display: flex; gap: 6px; overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
+  .hud-stats { display: flex; gap: 8px; overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
   .hud-stats::-webkit-scrollbar { display: none; }
-  .hud-pill { background: #000; border: 1px solid var(--panel-border); padding: 6px 10px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: bold; }
+  .hud-pill { background: #000; border: 1px solid var(--panel-border); padding: 6px 12px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: bold; }
 
   .buy-mode-bar { display: flex; gap: 4px; background: #000; border: 1px solid var(--panel-border); padding: 4px; border-radius: 4px; align-items: center; font-size: 10px; font-weight: bold; }
-  .buy-btn { background: transparent; color: var(--silver-dim); border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-weight: bold; }
+  .buy-btn { background: transparent; color: var(--silver-dim); border: none; padding: 6px 10px; border-radius: 2px; cursor: pointer; font-weight: bold; transition: 0.15s;}
   .buy-btn.active { background: var(--silver-bright); color: #000; }
 
   nav { flex-shrink: 0; display: flex; background: var(--panel-bg); border-bottom: 1px solid var(--panel-border); overflow-x: auto; white-space: nowrap; z-index: 9; }
   nav::-webkit-scrollbar { display: none; }
-  .nav-btn { flex: 0 0 auto; padding: 14px 16px; background: transparent; border: none; border-right: 1px solid var(--panel-border); color: var(--silver-dim); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
+  .nav-btn { flex: 0 0 auto; padding: 14px 16px; background: transparent; border: none; border-right: 1px solid var(--panel-border); color: var(--silver-dim); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.2s;}
   .nav-btn.active { background: rgba(255, 255, 255, 0.05); color: #fff; border-bottom: 2px solid #fff; }
 
   main { flex: 1; overflow-y: auto; padding: 12px; padding-bottom: 75px; z-index: 2; }
   .view-tab { display: none; flex-direction: column; gap: 12px; }
   .view-tab.active { display: flex; }
 
-  .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
   .panel-header { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #fff; padding-bottom: 8px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; }
 
-  button.btn { background: #000; border: 1px solid var(--silver-dim); color: var(--silver-bright); padding: 10px 14px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; cursor: pointer; transition: 0.1s; }
+  /* Neater Control Bars */
+  .control-bar { display: flex; flex-wrap: wrap; gap: 8px; background: #000; padding: 10px; border-radius: 4px; border: 1px solid var(--panel-border); align-items: center; }
+  .control-group { display: flex; gap: 4px; align-items: center; border-right: 1px solid var(--panel-border); padding-right: 8px; }
+  .control-group:last-child { border-right: none; padding-right: 0; }
+  .control-label { font-size: 9px; font-weight: bold; color: var(--silver-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+  button.btn { background: #000; border: 1px solid var(--silver-dim); color: var(--silver-bright); padding: 8px 12px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; cursor: pointer; transition: 0.1s; }
   button.btn:active { background: var(--silver-bright); color: #000; border-color: var(--silver-bright); }
+  button.btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--silver-dark); }
   button.btn-silver { background: #1a1a1a; border-color: var(--silver-bright); color: #fff; }
   button.btn-silver:active { background: #fff; color: #000; }
   button.btn-danger { border-color: var(--status-red); color: var(--status-red); }
   button.btn-danger:active { background: var(--status-red); color: #fff; }
-  button.btn-purple { border-color: #a855f7; color: #a855f7; }
-  button.btn-purple:active { background: #a855f7; color: #fff; }
+  button.btn-purple { border-color: var(--status-purple); color: var(--status-purple); }
+  button.btn-purple:active { background: var(--status-purple); color: #fff; }
 
   .fleet-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
   @media(min-width: 650px) { .fleet-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); } }
 
-  .plane-card { background: #000; border: 1px solid var(--panel-border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 8px; position: relative; }
-  .plane-card.in-flight { border-left: 3px solid var(--status-green); }
-  .plane-card.damaged { border-left: 3px solid var(--status-red); }
+  .plane-card { background: #000; border: 1px solid var(--panel-border); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 8px; position: relative; transition: 0.2s border; }
+  .plane-card.in-flight { border-left: 4px solid var(--status-green); }
+  .plane-card.damaged { border-left: 4px solid var(--status-red); }
   
   .spec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: #0a0a0c; padding: 8px; border-radius: 4px; font-size: 10px; font-family: monospace; border: 1px solid var(--panel-border); }
   .spec-grid span { color: var(--silver-dim); }
 
-  .badge { padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: 900; font-family: monospace; background: #222; color: #fff; border: 1px solid #444; }
+  .badge { padding: 3px 6px; border-radius: 3px; font-size: 9px; font-weight: 900; font-family: monospace; background: #222; color: #fff; border: 1px solid #444; }
   
   .route-row { background: #000; border: 1px solid var(--panel-border); border-radius: 4px; padding: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
 
@@ -94,10 +102,10 @@
 
   .fraction-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 
-  select { background: #111; color: #fff; border: 1px solid var(--silver-dark); padding: 8px; font-size: 11px; border-radius: 4px; width: 100%; outline: none; font-weight: bold;}
-
+  select { background: #111; color: #fff; border: 1px solid var(--silver-dark); padding: 8px; font-size: 11px; border-radius: 4px; outline: none; font-weight: bold; cursor: pointer;}
+  
   #toast-rack { position: fixed; bottom: 20px; left: 14px; right: 14px; display: flex; flex-direction: column; gap: 8px; z-index: 1000; pointer-events: none; }
-  .toast { background: #000; border: 1px solid var(--silver-dark); border-left: 4px solid var(--silver-bright); color: #fff; padding: 12px 14px; font-size: 12px; font-weight: bold; font-family: monospace; border-radius: 4px; box-shadow: 0 6px 20px rgba(0,0,0,0.9); animation: slideUp 0.2s, fadeOut 0.4s 2.8s forwards; }
+  .toast { background: #000; border: 1px solid var(--silver-dark); border-left: 4px solid var(--silver-bright); color: #fff; padding: 12px 14px; font-size: 12px; font-weight: bold; font-family: monospace; border-radius: 4px; box-shadow: 0 6px 20px rgba(0,0,0,0.9); animation: slideUp 0.2s, fadeOut 0.4s 2.8s forwards; pointer-events: auto;}
   
   @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @keyframes fadeOut { to { opacity: 0; transform: translateY(-8px); } }
@@ -107,7 +115,7 @@
 
 <header>
   <div class="header-top">
-    <div class="brand-title">SILVER &amp; BLACK <span>// V1.5.1</span></div>
+    <div class="brand-title">SILVER &amp; BLACK <span>// V1.6</span></div>
     <div style="display:flex; gap:6px;">
       <button class="btn" style="padding:6px 10px; font-size:9px;" onclick="saveGame()">SAVE</button>
       <button class="btn" style="padding:6px 10px; font-size:9px;" onclick="loadGame()">LOAD</button>
@@ -122,7 +130,7 @@
       <div class="hud-pill">JET-A: <span id="hud-fuel" style="color:var(--status-amber);">0</span></div>
     </div>
     <div class="buy-mode-bar">
-      PROCURE: 
+      <span style="padding-left:4px; padding-right:4px;">PROCURE:</span>
       <button class="buy-btn active" id="buy-1" onclick="setBuyMode(1)">1x</button>
       <button class="buy-btn" id="buy-0.25" onclick="setBuyMode(0.25)">25%</button>
       <button class="buy-btn" id="buy-0.5" onclick="setBuyMode(0.5)">50%</button>
@@ -138,7 +146,7 @@
   <button class="nav-btn" onclick="setTab('fleet')">Fleet Ops</button>
   <button class="nav-btn" onclick="setTab('pilots')">Pilot Roster</button>
   <button class="nav-btn" onclick="setTab('routes')">Global Routes</button>
-  <button class="nav-btn" onclick="setTab('auction')">Live Auctions</button>
+  <button class="nav-btn" onclick="setTab('auction')">Black Market</button>
   <button class="nav-btn" onclick="setTab('upgrades')">Upgrades</button>
 </nav>
 
@@ -160,43 +168,23 @@
   <div id="tab-gacha" class="view-tab">
     <div class="panel">
       <div class="panel-header">Aircraft Cargo Shipments</div>
-      <p style="font-size:11px; color:var(--silver-dim); margin-bottom:8px;">Crack crates to import planes. Qty respects your Top-Bar Procure setting (1x, 25%, MAX, etc).</p>
-      <div style="border:1px solid var(--panel-border); padding:10px; margin-bottom:8px; border-radius:4px;">
-        <div style="font-size:11px; font-weight:bold; margin-bottom:8px;">DOMESTIC FREIGHT [Tiers I - IV]</div>
-        <button class="btn" style="width:100%;" onclick="buyAirCrates(0, 10000)">IMPORT ($10K/ea)</button>
-      </div>
-      <div style="border:1px solid var(--panel-border); padding:10px; margin-bottom:8px; border-radius:4px;">
-        <div style="font-size:11px; color:var(--status-blue); font-weight:bold; margin-bottom:8px;">GLOBAL CONVEYORS [Tiers III - VI]</div>
-        <button class="btn" style="width:100%; border-color:var(--status-blue);" onclick="buyAirCrates(1, 100000)">IMPORT ($100K/ea)</button>
-      </div>
-      <div style="border:1px solid var(--panel-border); padding:10px; margin-bottom:8px; border-radius:4px;">
-        <div style="font-size:11px; color:var(--t4-col); font-weight:bold; margin-bottom:8px;">HEAVY LIFTERS [Tiers V - VIII]</div>
-        <button class="btn btn-purple" style="width:100%;" onclick="buyAirCrates(2, 1000000)">IMPORT ($1.0M/ea)</button>
-      </div>
-      <div style="border:1px solid var(--panel-border); padding:10px; border-radius:4px;">
-        <div style="font-size:11px; color:var(--status-amber); font-weight:bold; margin-bottom:8px;">EXECUTIVE FLAGSHIPS [Tiers VII - X]</div>
-        <button class="btn" style="width:100%; border-color:var(--status-amber); color:var(--status-amber);" onclick="buyAirCrates(3, 5000000)">IMPORT ($5.0M/ea)</button>
+      <p style="font-size:11px; color:var(--silver-dim); margin-bottom:8px;">Crack crates to import planes. Qty respects your Top-Bar Procure setting.</p>
+      <div class="fraction-row">
+        <button class="btn" onclick="buyAirCrates(0, 10000)">T1-T4 ($10K)</button>
+        <button class="btn" style="border-color:var(--status-blue); color:var(--status-blue);" onclick="buyAirCrates(1, 100000)">T3-T6 ($100K)</button>
+        <button class="btn btn-purple" onclick="buyAirCrates(2, 1000000)">T5-T8 ($1.0M)</button>
+        <button class="btn" style="border-color:var(--status-amber); color:var(--status-amber);" onclick="buyAirCrates(3, 5000000)">T7-T10 ($5.0M)</button>
       </div>
     </div>
 
     <div class="panel">
       <div class="panel-header">Pilot Headhunter Dossiers</div>
       <p style="font-size:11px; color:var(--silver-dim); margin-bottom:8px;">Recruit from 320,000 unique pilots.</p>
-      <div style="border:1px solid var(--panel-border); padding:10px; margin-bottom:8px; border-radius:4px;">
-        <div style="font-size:11px; font-weight:bold; margin-bottom:8px;">FLIGHT ACADEMY [Tiers I - IV]</div>
-        <button class="btn" style="width:100%;" onclick="buyDossiers(0, 5000)">RECRUIT ($5K/ea)</button>
-      </div>
-      <div style="border:1px solid var(--panel-border); padding:10px; margin-bottom:8px; border-radius:4px;">
-        <div style="font-size:11px; color:var(--status-blue); font-weight:bold; margin-bottom:8px;">VETERAN CONTRACTORS [Tiers III - VI]</div>
-        <button class="btn" style="width:100%; border-color:var(--status-blue);" onclick="buyDossiers(1, 50000)">RECRUIT ($50K/ea)</button>
-      </div>
-      <div style="border:1px solid var(--panel-border); padding:10px; margin-bottom:8px; border-radius:4px;">
-        <div style="font-size:11px; color:var(--t4-col); font-weight:bold; margin-bottom:8px;">SHADOW SYNDICATE [Tiers V - VIII]</div>
-        <button class="btn btn-purple" style="width:100%;" onclick="buyDossiers(2, 250000)">RECRUIT ($250K/ea)</button>
-      </div>
-      <div style="border:1px solid var(--panel-border); padding:10px; border-radius:4px;">
-        <div style="font-size:11px; color:var(--status-amber); font-weight:bold; margin-bottom:8px;">LEGENDARY ACES [Tiers VII - X]</div>
-        <button class="btn" style="width:100%; border-color:var(--status-amber); color:var(--status-amber);" onclick="buyDossiers(3, 1000000)">RECRUIT ($1.0M/ea)</button>
+      <div class="fraction-row">
+        <button class="btn" onclick="buyDossiers(0, 5000)">T1-T4 ($5K)</button>
+        <button class="btn" style="border-color:var(--status-blue); color:var(--status-blue);" onclick="buyDossiers(1, 50000)">T3-T6 ($50K)</button>
+        <button class="btn btn-purple" onclick="buyDossiers(2, 250000)">T5-T8 ($250K)</button>
+        <button class="btn" style="border-color:var(--status-amber); color:var(--status-amber);" onclick="buyDossiers(3, 1000000)">T7-T10 ($1.0M)</button>
       </div>
     </div>
 
@@ -213,19 +201,37 @@
       <div class="panel-header"><span>Global Flight Operations</span>
         <div style="display:flex; gap:6px;"><button class="btn btn-silver" onclick="dispatchAll()">Dispatch All</button><button class="btn" onclick="maintainAll()">MRO All</button></div>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <div style="font-size:11px; color:var(--silver-dim);">Sort:</div>
-          <div style="display:flex; gap:4px;">
-              <button class="btn" style="padding:4px 8px; font-size:9px;" onclick="sortHangar('val')">VAL</button>
-              <button class="btn" style="padding:4px 8px; font-size:9px;" onclick="sortHangar('tier')">TIER</button>
+      
+      <!-- NEATER CONTROL BAR -->
+      <div class="control-bar">
+          <div class="control-group">
+              <span class="control-label">Sort:</span>
+              <button class="btn" style="padding:6px 10px; font-size:9px;" onclick="sortHangar('val')">VAL</button>
+              <button class="btn" style="padding:6px 10px; font-size:9px;" onclick="sortHangar('tier')">TIER</button>
+          </div>
+          <div class="control-group">
+              <span class="control-label">Filter:</span>
+              <select id="fleet-tier-filter" onchange="filterHangarTier(this.value)" style="padding:4px; font-size:10px; width:auto;">
+                  <option value="ALL">All Tiers</option>
+                  <option value="0">Tier I</option><option value="1">Tier II</option>
+                  <option value="2">Tier III</option><option value="3">Tier IV</option>
+                  <option value="4">Tier V</option><option value="5">Tier VI</option>
+                  <option value="6">Tier VII</option><option value="7">Tier VIII</option>
+                  <option value="8">Tier IX</option><option value="9">Tier X</option>
+              </select>
+          </div>
+          <div class="control-group" style="border:none;">
+              <button class="btn btn-silver" style="padding:6px 10px; font-size:9px;" onclick="importPlane()">Import Base36</button>
           </div>
       </div>
-      <div class="fraction-row" style="margin-bottom:12px;">
+
+      <div class="fraction-row" style="margin-top:4px; margin-bottom:4px;">
         <button class="btn btn-danger" onclick="quickSellPlanes(0)">Scrap T1</button>
         <button class="btn btn-danger" onclick="quickSellPlanes(1)">Scrap T2&lt;</button>
         <button class="btn btn-danger" onclick="quickSellPlanes(2)">Scrap T3&lt;</button>
         <button class="btn btn-danger" onclick="quickSellPlanes(3)">Scrap T4&lt;</button>
       </div>
+
       <div id="fleet-list" class="fleet-grid"></div>
     </div>
   </div>
@@ -233,20 +239,38 @@
   <!-- TAB 4: PILOTS -->
   <div id="tab-pilots" class="view-tab">
     <div class="panel">
-      <div class="panel-header">
-        <span>Pilot Roster</span>
-        <div style="display:flex; gap:4px;">
-            <button class="btn btn-silver" style="font-size:9px;" onclick="importPilot()">Import Base36</button>
-            <button class="btn" style="font-size:9px;" onclick="sortPilots('val')">Sort: VAL</button>
-            <button class="btn" style="font-size:9px;" onclick="sortPilots('tier')">Sort: TIER</button>
-        </div>
+      <div class="panel-header"><span>Syndicate Pilot Roster</span></div>
+      
+      <!-- NEATER CONTROL BAR -->
+      <div class="control-bar">
+          <div class="control-group">
+              <span class="control-label">Sort:</span>
+              <button class="btn" style="padding:6px 10px; font-size:9px;" onclick="sortPilots('val')">VAL</button>
+              <button class="btn" style="padding:6px 10px; font-size:9px;" onclick="sortPilots('tier')">TIER</button>
+          </div>
+          <div class="control-group">
+              <span class="control-label">Filter:</span>
+              <select id="pilot-tier-filter" onchange="filterPilotTier(this.value)" style="padding:4px; font-size:10px; width:auto;">
+                  <option value="ALL">All Tiers</option>
+                  <option value="0">Tier I</option><option value="1">Tier II</option>
+                  <option value="2">Tier III</option><option value="3">Tier IV</option>
+                  <option value="4">Tier V</option><option value="5">Tier VI</option>
+                  <option value="6">Tier VII</option><option value="7">Tier VIII</option>
+                  <option value="8">Tier IX</option><option value="9">Tier X</option>
+              </select>
+          </div>
+          <div class="control-group" style="border:none;">
+              <button class="btn btn-silver" style="padding:6px 10px; font-size:9px;" onclick="importPilot()">Import Base36</button>
+          </div>
       </div>
-      <div class="fraction-row" style="margin-bottom:12px;">
+
+      <div class="fraction-row" style="margin-top:4px; margin-bottom:4px;">
         <button class="btn btn-danger" onclick="quickSellPilots(0)">Dismiss T1</button>
         <button class="btn btn-danger" onclick="quickSellPilots(1)">Dismiss T2&lt;</button>
         <button class="btn btn-danger" onclick="quickSellPilots(2)">Dismiss T3&lt;</button>
         <button class="btn btn-danger" onclick="quickSellPilots(3)">Dismiss T4&lt;</button>
       </div>
+
       <div id="pilots-grid" class="fleet-grid"></div>
     </div>
   </div>
@@ -264,11 +288,13 @@
     <div class="panel">
       <div class="panel-header"><span>Live Underworld Auctions</span><span style="color:var(--status-amber);"><span id="auction-count">0</span>/5 LANES</span></div>
       <p style="font-size:11px; color:var(--silver-dim); margin-bottom:10px;">Bids start at 90% base value. Sniping in the last 1s resets the clock to 3s. Massive 20x bid wars possible.</p>
+      
       <div style="display:flex; gap:8px; margin-bottom:12px;">
-          <button class="btn btn-silver" style="flex:1; padding:12px;" onclick="fillAuctions('planes')">Auto-Fill Planes</button>
-          <button class="btn btn-silver" style="flex:1; padding:12px;" onclick="fillAuctions('pilots')">Auto-Fill Pilots</button>
+          <button class="btn btn-silver" style="flex:1; padding:12px;" onclick="fillAuctions('planes')">Auto-Fill 5 Least Valuable Planes</button>
+          <button class="btn btn-silver" style="flex:1; padding:12px;" onclick="fillAuctions('pilots')">Auto-Fill 5 Least Valuable Pilots</button>
       </div>
-      <div id="auction-idle" style="text-align:center; padding:20px; color:var(--silver-dim); font-weight:bold;">Lanes empty. Push assets to the block.</div>
+
+      <div id="auction-idle" style="text-align:center; padding:20px; color:var(--silver-dim); font-weight:bold;">Lanes empty. Push individual assets from your Fleet/Roster, or Auto-Fill.</div>
       <div id="auction-board" class="fleet-grid" style="grid-template-columns:1fr;"></div>
     </div>
   </div>
@@ -336,7 +362,9 @@
     fuelSpotPrice: 2.85,
     buyMode: 1, 
     sortHangarMode: 'val',
+    filterHangarTier: 'ALL',
     sortPilotsMode: 'val',
+    filterPilotTier: 'ALL',
     fleet: [], pilots: [], routes: [], auctions: [], marketCars: [],
     marketTimer: 10.0,
     upgrades: { mkt: 0, eng: 0 }
@@ -368,12 +396,16 @@
     toast("OVERRIDE: +$2B, +10M Gal Jet-A, MRO executed.");
     updateHUD(); renderFleet();
   }
-  function saveGame() { localStorage.setItem('silverBlackV1_5', JSON.stringify(State)); toast("Data Saved."); }
+  function saveGame() { localStorage.setItem('silverBlackV1_6', JSON.stringify(State)); toast("Data Saved."); }
   function loadGame() {
-    let s = localStorage.getItem('silverBlackV1_5');
+    let s = localStorage.getItem('silverBlackV1_6');
     if (s) {
       State = JSON.parse(s);
       if(!State.routes || State.routes.length < 200) State.routes = generateRoutes();
+      State.filterHangarTier = 'ALL'; State.filterPilotTier = 'ALL';
+      if($('fleet-tier-filter'))$('fleet-tier-filter').value = 'ALL';
+      if($('pilot-tier-filter'))$('pilot-tier-filter').value = 'ALL';
+      
       State.fleet.forEach(p => { p.status = 'READY'; p.flightEnd = 0; p.flightStart = 0; });
       updateHUD(); setBuyMode(State.buyMode||1); setTab('market');
       toast("Data Restored.");
@@ -394,13 +426,15 @@
       return Math.min(q, maxC);
   }
 
+  /* BASE36 FOR PILOTS */
   function exportPilot(uid) {
       let p = State.pilots.find(x => x.uid===uid); if(!p) return;
       let codeInt = p.fIdx*320000 + p.lIdx*8000 + p.cIdx*400 + p.sIdx*40 + p.tIdx*4 + p.bIdx;
-      prompt("Copy Pilot Base36 Trade Code:", codeInt.toString(36).toUpperCase());
+      prompt("Copy Pilot Base36 Trade Code:", "PL-" + codeInt.toString(36).toUpperCase());
   }
   function importPilot() {
-      let str = prompt("Enter Base36 Trade Code:"); if(!str) return;
+      let str = prompt("Enter Pilot Base36 Trade Code (e.g., PL-XXX):"); if(!str) return;
+      str = str.replace('PL-', '').trim();
       let codeInt = parseInt(str, 36); if(isNaN(codeInt)) { toast("Invalid code."); return; }
       let bIdx = codeInt % 4; codeInt = Math.floor(codeInt/4);
       let tIdx = codeInt % 10; codeInt = Math.floor(codeInt/10);
@@ -410,7 +444,45 @@
       let fIdx = codeInt % 40;
       if(fIdx>=40 || lIdx>=40 || cIdx>=20 || sIdx>=10 || tIdx>=10 || bIdx>=4) { toast("Corrupt code."); return; }
       State.pilots.push(constructPilot(fIdx, lIdx, cIdx, sIdx, tIdx, bIdx)); 
-      updateHUD(); renderPilots(); toast("Pilot recruited!");
+      updateHUD(); renderPilots(); toast("Pilot imported!");
+  }
+
+  /* BASE36 FOR PLANES */
+  function exportPlane(uid) {
+      let p = State.fleet.find(x => x.uid===uid); if(!p) return;
+      // 10 pre, 8 brand, 10 mod, 4 role, 10 tier
+      let codeInt = p.pIdx*3200 + p.bIdx*400 + p.mIdx*40 + p.rIdx*10 + p.tierIndex;
+      prompt("Copy Aircraft Base36 Trade Code:", "SB-" + codeInt.toString(36).toUpperCase());
+  }
+  function importPlane() {
+      let str = prompt("Enter Aircraft Base36 Trade Code (e.g., SB-XXX):"); if(!str) return;
+      str = str.replace('SB-', '').trim();
+      let codeInt = parseInt(str, 36); if(isNaN(codeInt)) { toast("Invalid code."); return; }
+      let tIdx = codeInt % 10; codeInt = Math.floor(codeInt/10);
+      let rIdx = codeInt % 4; codeInt = Math.floor(codeInt/4);
+      let mIdx = codeInt % 10; codeInt = Math.floor(codeInt/10);
+      let bIdx = codeInt % 8; codeInt = Math.floor(codeInt/8);
+      let pIdx = codeInt % 10;
+      if(pIdx>=10 || bIdx>=8 || mIdx>=10 || rIdx>=4 || tIdx>=10) { toast("Corrupt code."); return; }
+      
+      let tD = TIERS[tIdx];
+      let val = Math.floor(tD.baseVal * 1.0); 
+      let cost = Math.max(50000, Math.floor(val * 0.8)); 
+      let cap = Math.floor(50 + (tIdx * 45));
+      let rnge = Math.floor(1000 + (tIdx * 900));
+      let burn = Math.floor(200 + (tIdx * 150));
+
+      let importedPlane = {
+          uid: 'N' + Math.floor(100+Math.random()*899) + 'SB',
+          pIdx, bIdx, mIdx, rIdx, tierIndex: tIdx,
+          name: `${AIR_PREFIXES[pIdx]} ${AIR_BRANDS[bIdx]} ${AIR_MODELS[mIdx]}`,
+          role: AIR_ROLES[rIdx], tierName: tD.name, tierColor: tD.color,
+          value: val, cost: cost, capacity: cap, range: rnge, fuelBurn: burn,
+          condition: 100, status: 'READY', assignedRoute: null, assignedPilot: null
+      };
+      
+      State.fleet.push(importedPlane);
+      updateHUD(); renderFleet(); toast("Aircraft imported!");
   }
 
   /* ================= PROCEDURAL GENERATORS ================= */
@@ -430,10 +502,10 @@
   }
 
   function constructPlane(tIdx) {
-      let p = AIR_PREFIXES[Math.floor(Math.random() * AIR_PREFIXES.length)];
-      let b = AIR_BRANDS[Math.floor(Math.random() * AIR_BRANDS.length)];
-      let m = AIR_MODELS[Math.floor(Math.random() * AIR_MODELS.length)];
-      let r = AIR_ROLES[Math.floor(Math.random() * AIR_ROLES.length)];
+      let pIdx = Math.floor(Math.random() * AIR_PREFIXES.length);
+      let bIdx = Math.floor(Math.random() * AIR_BRANDS.length);
+      let mIdx = Math.floor(Math.random() * AIR_MODELS.length);
+      let rIdx = Math.floor(Math.random() * AIR_ROLES.length);
       let tD = TIERS[tIdx];
 
       let fluct = 1.0 + (Math.random() * 0.4 - 0.2); 
@@ -446,8 +518,9 @@
 
       return {
           uid: 'N' + Math.floor(100+Math.random()*899) + 'SB',
-          name: `${p} ${b} ${m}`,
-          role: r, tierIndex: tIdx, tierName: tD.name, tierColor: tD.color,
+          pIdx, bIdx, mIdx, rIdx, tierIndex: tIdx,
+          name: `${AIR_PREFIXES[pIdx]} ${AIR_BRANDS[bIdx]} ${AIR_MODELS[mIdx]}`,
+          role: AIR_ROLES[rIdx], tierName: tD.name, tierColor: tD.color,
           value: val, cost: cost, capacity: cap, range: rnge, fuelBurn: burn,
           condition: 100, status: 'READY', assignedRoute: null, assignedPilot: null
       };
@@ -534,6 +607,7 @@
 
   /* ================= FLEET OPS ================= */
   function sortHangar(mode) { State.sortHangarMode = mode; renderFleet(); }
+  function filterHangarTier(val) { State.filterHangarTier = val; renderFleet(); }
   
   function assignRoute(pUid, rId) { const p = State.fleet.find(x=>x.uid===pUid); if(p) p.assignedRoute = rId; }
   function assignPilot(pUid, piUid) {
@@ -546,15 +620,18 @@
 
   function renderFleet() {
     const list = $('fleet-list'); if(!list) return; list.innerHTML = '';
-    if(State.fleet.length===0) { list.innerHTML=`<div style="text-align:center; padding:30px; color:var(--silver-dim); font-size:12px;">Hangar is empty. Hit the Market.</div>`; return; }
+    
+    let filtered = [...State.fleet];
+    if(State.filterHangarTier !== 'ALL') filtered = filtered.filter(p => p.tierIndex === parseInt(State.filterHangarTier));
+    
+    if(filtered.length===0) { list.innerHTML=`<div style="text-align:center; padding:30px; color:var(--silver-dim); font-size:12px;">No aircraft match current filters.</div>`; return; }
 
-    let sorted = [...State.fleet];
-    if(State.sortHangarMode==='val') sorted.sort((a,b)=>b.value-a.value);
-    if(State.sortHangarMode==='tier') sorted.sort((a,b)=>b.tierIndex-a.tierIndex);
+    if(State.sortHangarMode==='val') filtered.sort((a,b)=>b.value-a.value);
+    if(State.sortHangarMode==='tier') filtered.sort((a,b)=>b.tierIndex-a.tierIndex);
 
     const uRts = State.routes.filter(r=>r.unlocked);
     
-    sorted.forEach(p => {
+    filtered.forEach(p => {
       const c = document.createElement('div'); c.className = `plane-card ${p.status==='IN_FLIGHT'?'in-flight':p.condition<50?'damaged':''}`; c.style.borderColor = p.tierColor;
       
       let rtSel = `<select ${p.status==='IN_FLIGHT'?'disabled':''} onchange="assignRoute('${p.uid}', this.value)"><option value="">-- No Route --</option>`;
@@ -570,10 +647,14 @@
         ${p.status==='IN_FLIGHT'?`<div class="flight-bar-bg"><div id="bar-${p.uid}" class="flight-bar-fill"></div></div>`:''}
         <div style="display:flex; justify-content:space-between; margin-top:4px;">
             <div style="display:flex; gap:4px;">
+                <button class="btn" style="padding:4px 6px; font-size:9px;" onclick="exportPlane('${p.uid}')">Trade Code</button>
                 <button class="btn btn-purple" style="padding:4px 6px; font-size:9px;" ${p.status==='IN_FLIGHT'?'disabled':''} onclick="initAuction('${p.uid}', 'plane')">Auction</button>
                 <button class="btn btn-danger" style="padding:4px 6px; font-size:9px;" ${p.status==='IN_FLIGHT'?'disabled':''} onclick="scrapPlane('${p.uid}')">Scrap</button>
             </div>
-            <button class="btn btn-silver" style="padding:6px 12px; font-size:10px;" ${p.status==='IN_FLIGHT'||!p.assignedRoute||!p.assignedPilot?'disabled':''} onclick="dispatchFlight('${p.uid}')">Dispatch</button>
+            <div style="display:flex; gap:4px;">
+                <button class="btn" style="padding:4px 8px; font-size:9px;" ${p.status==='IN_FLIGHT'?'disabled':''} onclick="maintainAirframe('${p.uid}')">C-Check</button>
+                <button class="btn btn-silver" style="padding:6px 12px; font-size:10px;" ${p.status==='IN_FLIGHT'||!p.assignedRoute||!p.assignedPilot?'disabled':''} onclick="dispatchFlight('${p.uid}')">Dispatch</button>
+            </div>
         </div>
       `;
       list.appendChild(c);
@@ -600,13 +681,20 @@
 
   /* ================= PILOT ROSTER ================= */
   function sortPilots(mode) { State.sortPilotsMode = mode; renderPilots(); }
+  function filterPilotTier(val) { State.filterPilotTier = val; renderPilots(); }
+
   function renderPilots() {
     const grid = $('pilots-grid'); if(!grid) return; grid.innerHTML = '';
-    if(State.pilots.length===0) return;
-    let sorted = [...State.pilots];
-    if(State.sortPilotsMode==='val') sorted.sort((a,b)=>b.value-a.value);
-    if(State.sortPilotsMode==='tier') sorted.sort((a,b)=>b.tierIndex-a.tierIndex);
-    sorted.forEach(p => {
+    
+    let filtered = [...State.pilots];
+    if(State.filterPilotTier !== 'ALL') filtered = filtered.filter(p => p.tierIndex === parseInt(State.filterPilotTier));
+
+    if(filtered.length===0) { grid.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--silver-dim); font-size:12px; font-weight:bold;">No pilots match filters.</div>`; return; }
+
+    if(State.sortPilotsMode==='val') filtered.sort((a,b)=>b.value-a.value);
+    if(State.sortPilotsMode==='tier') filtered.sort((a,b)=>b.tierIndex-a.tierIndex);
+    
+    filtered.forEach(p => {
       const c = document.createElement('div'); c.className = 'plane-card'; c.style.borderColor = p.tierColor;
       c.innerHTML = `
         <div class="stat-block" style="display:flex; justify-content:space-between;"><span style="color:${p.tierColor}; font-weight:bold;">${p.tierName.split(':')[0]}</span><span style="color:var(--status-green);">[${p.bType}] +${fmt(p.bonus)}</span></div>
@@ -614,7 +702,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
           <span class="stat-block" style="font-size:11px; color:var(--silver-bright); font-weight:bold;">VAL: $${fmt(p.value)}</span>
           <div style="display:flex; flex-wrap:wrap; gap:4px; justify-content:flex-end;">
-            <button class="btn" style="padding:4px 6px; font-size:8px;" onclick="exportPilot('${p.uid}')">Trade</button>
+            <button class="btn" style="padding:4px 6px; font-size:8px;" onclick="exportPilot('${p.uid}')">Trade Code</button>
             <button class="btn" style="padding:4px 6px; font-size:8px;" onclick="togglePilotLock('${p.uid}')">${p.locked?'Unlock':'Lock'}</button>
             ${!p.assignedTo&&!p.locked?`<button class="btn btn-purple" style="padding:4px 6px; font-size:8px;" onclick="initAuction('${p.uid}', 'pilot')">Auction</button><button class="btn btn-danger" style="padding:4px 6px; font-size:8px;" onclick="sellPilot('${p.uid}')">Dismiss</button>`:''}
           </div>
@@ -667,7 +755,7 @@
       while(budget >= getUpgCost(type, State.upgrades[type]+addLvl)) {
         let c = getUpgCost(type, State.upgrades[type]+addLvl);
         budget-=c; spent+=c; addLvl++;
-        if(addLvl>50) break; // sanity cap
+        if(addLvl>50) break; 
       }
       if(addLvl===0){toast("Insufficient funds.");return;}
       State.funds-=spent; State.upgrades[type]+=addLvl;
@@ -713,17 +801,29 @@
     State.auctions.push({ item:item, type:type, baseVal:item.value, timer:20.0, currentBid:Math.floor(item.value*0.9), log:[] });
     updateHUD(); renderAuctions(); renderFleet(); renderPilots(); toast("Sent to Auction.");
   }
+  
   function fillAuctions(type) {
-    let a=5-State.auctions.length; if(a<=0)return;
-    let c = type==='planes' ? State.fleet.filter(p=>p.status==='READY'&&!p.assignedPilot).sort((x,y)=>x.value-y.value) : State.pilots.filter(p=>!p.assignedTo&&!p.locked).sort((x,y)=>x.value-y.value);
+    let a=5-State.auctions.length; if(a<=0) { toast("Lanes full."); return; }
+    
+    // Sort strictly by value ASCENDING (Least Valuable First)
+    let c = type==='planes' 
+        ? State.fleet.filter(p=>p.status==='READY'&&!p.assignedPilot).sort((x,y)=>x.value-y.value) 
+        : State.pilots.filter(p=>!p.assignedTo&&!p.locked).sort((x,y)=>x.value-y.value);
+        
     if(c.length===0){toast("No eligible assets.");return;}
+    
+    let loaded = 0;
     c.slice(0,a).forEach(item=>{ 
         if(type==='planes'){ let i=State.fleet.findIndex(x=>x.uid===item.uid); State.fleet.splice(i,1); }
         if(type==='pilots'){ let i=State.pilots.findIndex(x=>x.uid===item.uid); State.pilots.splice(i,1); }
         State.auctions.push({item:item, type:type, baseVal:item.value, timer:20.0, currentBid:Math.floor(item.value*0.9), log:[]}); 
+        loaded++;
     });
-    updateHUD(); renderPilots(); renderFleet(); renderAuctions(); toast("Lanes filled.");
+    
+    updateHUD(); renderPilots(); renderFleet(); renderAuctions(); 
+    toast(`Loaded ${loaded} least valuable assets to Auction.`);
   }
+
   function renderAuctions() {
     const b=$('auction-board'); if(!b)return; $('auction-count').innerText=State.auctions.length; b.innerHTML='';$('auction-idle').style.display = State.auctions.length===0 ? 'block' : 'none';
     State.auctions.forEach((a) => {
@@ -757,7 +857,7 @@
           }
       });
 
-      // Auctions
+      // Auctions (DOM Optimized)
       if(State.auctions.length>0) {
           for(let i=State.auctions.length-1; i>=0; i--) {
               let a=State.auctions[i]; a.timer-=0.1; 
@@ -768,11 +868,11 @@
 
               if(a.timer>0 && Math.random()<0.10) {
                   let f=FACTIONS[Math.floor(Math.random()*FACTIONS.length)]; let m=1.05+(Math.random()*0.10);
-                  if(Math.random()<0.015) { m=2.0+(Math.random()*18.0); a.log.push(`<span style="color:var(--status-amber);">[BID WAR] Spike!</span>`); }
+                  if(Math.random()<0.015) { m=2.0+(Math.random()*18.0); a.log.push(`<span style="color:var(--status-amber);">[BID WAR] Spike multiplier!</span>`); }
                   let nB=Math.floor(a.currentBid*m); if(nB<=a.currentBid) nB=a.currentBid+1; a.currentBid=nB;
                   a.log.push(`<span style="color:var(--silver-bright);">[${f}] bids $${fmt(a.currentBid)}</span>`);
                   if(a.log.length>3) a.log.shift();
-                  if(a.timer<=1.0){ a.timer=3.0; a.log.push(`<span style="color:var(--status-red);">[OVERTIME] Reset to 3s!</span>`); }
+                  if(a.timer<=1.0){ a.timer=3.0; a.log.push(`<span style="color:var(--status-red);">[OVERTIME] Timer reset to 3s!</span>`); }
                   if(uiBid) uiBid.innerText = "$" + fmt(a.currentBid);
                   if($('tab-auction').classList.contains('active')) renderAuctions();
               } else {
@@ -799,7 +899,6 @@
     if(tabId==='pilots') renderPilots();
     if(tabId==='routes') renderRoutes();
     if(tabId==='auction') renderAuctions();
-    if(tabId==='upgrades') renderUpgrades();
   }
 
   function initUI() {
