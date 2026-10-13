@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Silver & Black: Fleet Command V1.9</title>
+<title>Silver & Black: Fleet Command V1.10</title>
 <style>
   :root {
     --bg-base: #040405;
@@ -43,37 +43,11 @@
   .hud-stats::-webkit-scrollbar { display: none; }
   .hud-pill { background: #000; border: 1px solid var(--panel-border); padding: 3px 6px; border-radius: 3px; font-size: 10px; font-family: monospace; font-weight: bold; }
 
-  /* V1.9: 2x4 Fixed Grid Navigation Menu */
-  nav { 
-    flex-shrink: 0; 
-    display: grid; 
-    grid-template-columns: repeat(4, 1fr); 
-    background: var(--panel-bg); 
-    border-bottom: 1px solid var(--panel-border); 
-    z-index: 9; 
-  }
-  .nav-btn { 
-    padding: 10px 4px; 
-    background: transparent; 
-    border: none; 
-    border-right: 1px solid var(--panel-border); 
-    border-bottom: 1px solid var(--panel-border); 
-    color: var(--silver-dim); 
-    font-size: 9px; 
-    font-weight: 800; 
-    text-transform: uppercase; 
-    letter-spacing: 0.5px; 
-    cursor: pointer; 
-    transition: 0.15s; 
-    text-align: center;
-  }
+  nav { flex-shrink: 0; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--panel-bg); border-bottom: 1px solid var(--panel-border); z-index: 9; }
+  .nav-btn { padding: 10px 4px; background: transparent; border: none; border-right: 1px solid var(--panel-border); border-bottom: 1px solid var(--panel-border); color: var(--silver-dim); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: 0.15s; text-align: center; }
   .nav-btn:nth-child(4n) { border-right: none; }
   .nav-btn:nth-child(n+5) { border-bottom: none; }
-  .nav-btn.active { 
-    background: rgba(255, 255, 255, 0.06); 
-    color: #fff; 
-    box-shadow: inset 0 -2px 0 #fff; 
-  }
+  .nav-btn.active { background: rgba(255, 255, 255, 0.06); color: #fff; box-shadow: inset 0 -2px 0 #fff; }
 
   main { flex: 1; overflow-y: auto; padding: 10px; padding-bottom: 70px; z-index: 2; }
   .view-tab { display: none; flex-direction: column; gap: 10px; }
@@ -138,7 +112,7 @@
 
 <header>
   <div class="header-top">
-    <div class="brand-title">SILVER &amp; BLACK <span>// V1.9</span></div>
+    <div class="brand-title">SILVER &amp; BLACK <span>// V1.10</span></div>
     <div style="display:flex; gap:4px;">
       <button class="btn" style="padding:3px 6px; font-size:8px;" onclick="saveGame()">SAVE</button>
       <button class="btn" style="padding:3px 6px; font-size:8px;" onclick="loadGame()">LOAD</button>
@@ -158,7 +132,7 @@
   <button class="nav-btn" onclick="setTab('gacha')">Logistics</button>
   <button class="nav-btn" onclick="setTab('fleet')">Fleet Ops</button>
   <button class="nav-btn" onclick="setTab('pilots')">Pilots</button>
-  <button class="nav-btn" onclick="setTab('routes')">Routes</button>
+  <button class="nav-btn" onclick="setTab('routes')">Routes (400)</button>
   <button class="nav-btn" onclick="setTab('auction')">Auctions</button>
   <button class="nav-btn" onclick="setTab('checklist')">Missions</button>
   <button class="nav-btn" onclick="setTab('upgrades')">Upgrades</button>
@@ -277,7 +251,8 @@
         <span>Fleet Operations</span>
         <div style="display:flex; gap:4px;">
           <button class="btn btn-silver" onclick="autoAssignPilots()">Auto-Crew</button>
-          <button class="btn btn-silver" onclick="dispatchAll()">Dispatch All</button>
+          <button class="btn btn-silver" onclick="autoAssignRoutes()">Auto-Route</button>
+          <button class="btn btn-silver" onclick="dispatchAll()">Dispatch</button>
           <button class="btn" onclick="maintainAll()">MRO All</button>
         </div>
       </div>
@@ -356,11 +331,11 @@
     </div>
   </div>
 
-  <!-- TAB 5: ROUTES -->
+  <!-- TAB 5: ROUTES (SPLIT BY CATEGORY) -->
   <div id="tab-routes" class="view-tab">
     <div class="panel">
       <div class="panel-header">
-        <span>Route Concessions (200 Routes)</span>
+        <span>Route Concessions (400 Routes)</span>
         <select id="route-cat-filter" onchange="filterRouteCategory(this.value)" style="padding:3px; font-size:9px; width:auto;">
           <option value="ALL">All Categories</option>
           <option value="PAX">Passenger Commercial</option>
@@ -378,16 +353,16 @@
   <!-- TAB 6: AUCTIONS -->
   <div id="tab-auction" class="view-tab">
     <div class="panel">
-      <div class="panel-header"><span>Underworld Bidding Lanes</span><span style="color:var(--status-amber);"><span id="auction-count">0</span>/5 LANES</span></div>
+      <div class="panel-header"><span>Underworld Bidding Lanes</span><span style="color:var(--status-amber);"><span id="auction-count">0</span>/10 LANES</span></div>
       <p style="font-size:10px; color:var(--silver-dim);">Bids start at 90% base value. Sniping in the last 1s resets clock to 3s. 2x-20x price spikes active.</p>
       
       <div style="display:flex; gap:6px;">
-        <button class="btn btn-silver" style="flex:1; padding:8px;" onclick="fillAuctions('planes')">Auto-Fill 5 Cheapest Planes</button>
-        <button class="btn btn-silver" style="flex:1; padding:8px;" onclick="fillAuctions('pilots')">Auto-Fill 5 Cheapest Pilots</button>
+        <button class="btn btn-silver" style="flex:1; padding:8px;" onclick="fillAuctions('planes')">Auto-Fill 10 Cheapest Planes</button>
+        <button class="btn btn-silver" style="flex:1; padding:8px;" onclick="fillAuctions('pilots')">Auto-Fill 10 Cheapest Pilots</button>
       </div>
 
       <div id="auction-idle" style="text-align:center; padding:16px; color:var(--silver-dim); font-size:11px;">Lanes empty. Use Auto-Fill or click Auction on any individual asset.</div>
-      <div id="auction-board" class="fleet-grid" style="grid-template-columns:1fr;"></div>
+      <div id="auction-board" class="fleet-grid"></div>
     </div>
   </div>
 
@@ -413,8 +388,8 @@
 
     <div class="panel">
       <div class="panel-header">
-        <span>Active Operations &amp; Side Missions</span>
-        <button class="btn" style="padding:2px 6px; font-size:8px;" onclick="refreshSideMissions()">Reroll Board</button>
+        <span>Targeted Dispatch Contracts</span>
+        <button class="btn" style="padding:2px 6px; font-size:8px;" onclick="refreshSideMissions()">Reroll Contracts</button>
       </div>
       <div id="side-missions-list" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
@@ -452,10 +427,11 @@
 <div id="toast-rack"></div>
 
 <script>
-  /* ================= 3,200 COMBINATION MATRICES ================= */
+  /* ================= 9,600 EXPANDED MATRICES ================= */
   const AIR_PREFIXES = ["Used","Charter","Strategic","Next-Gen","Heavy","Aero","Apex","Global","Combat","Black"];
   const AIR_BRANDS = ["Boeing","Airbus","Lockheed","Northrop","Antonov","Gulfstream","Embraer","Rockwell"];
-  const AIR_MODELS = ["737-800","A350","C-17","B-2 Spirit","SR-71","G700","An-124","C-130J","A380","U-2S"];
+  // Expanded to 20 Models for double variety
+  const AIR_MODELS = ["737-800","A350","C-17","B-2 Spirit","SR-71","G700","An-124","C-130J","A380","U-2S", "757-200", "A330neo", "Concorde", "MD-11F", "C-5 Galaxy", "KC-135", "F-22", "B-1B Lancer", "Global 8000", "A400M"];
   const AIR_ROLES = ["PAX", "CARGO", "VIP", "SPECIAL", "MIL", "SECRET"];
 
   const P_FIRST = ["John","Jane","James","Sarah","Michael","Elena","David","Maria","Robert","Anna","William","Emma","Richard","Olivia","Thomas","Sophia","Charles","Isabella","Daniel","Mia"];
@@ -553,12 +529,12 @@
     toast("OVERRIDE: +$2B Capital, +10M Gal Jet-A, Fleet Restored.");
     updateHUD(); renderFleet();
   }
-  function saveGame() { localStorage.setItem('silverBlackV1_9', JSON.stringify(State)); toast("Progress Saved."); }
+  function saveGame() { localStorage.setItem('silverBlackV1_10', JSON.stringify(State)); toast("Progress Saved."); }
   function loadGame() {
-    let s = localStorage.getItem('silverBlackV1_9');
+    let s = localStorage.getItem('silverBlackV1_10');
     if (s) {
       State = JSON.parse(s);
-      if(!State.routes || State.routes.length < 200) State.routes = generateRoutes();
+      if(!State.routes || State.routes.length < 400) State.routes = generateRoutes();
       if(!State.sideMissions || State.sideMissions.length === 0) generateSideMissions();
       State.fleet.forEach(p => { p.status = 'READY'; p.flightEnd = 0; p.flightStart = 0; });
       updateHUD(); updateAutomationUI(); setTab('market');
@@ -576,7 +552,7 @@
   function importPilot() {
     let str = prompt("Enter Pilot Base36 Code (PL-XXX):"); if(!str) return;
     str = str.replace('PL-', '').trim();
-    let codeInt = parseInt(str, 36); if(isNaN(codeInt) || codeInt < 0 || codeInt >= 3200) { toast("Invalid code."); return; }
+    let codeInt = parseInt(str, 36); if(isNaN(codeInt) || codeInt < 0) { toast("Invalid code."); return; }
     let cIdx = codeInt % 8; codeInt = Math.floor(codeInt / 8);
     let lIdx = codeInt % 20; codeInt = Math.floor(codeInt / 20);
     let fIdx = codeInt % 20;
@@ -588,15 +564,15 @@
 
   function exportPlane(uid) {
     let p = State.fleet.find(x => x.uid===uid); if(!p) return;
-    let codeInt = p.pIdx * 320 + p.bIdx * 40 + p.mIdx * 4 + p.rIdx;
+    let codeInt = p.pIdx * 960 + p.bIdx * 120 + p.mIdx * 6 + p.rIdx;
     prompt("Copy Aircraft Base36 Code:", "SB-" + codeInt.toString(36).toUpperCase());
   }
   function importPlane() {
     let str = prompt("Enter Aircraft Base36 Code (SB-XXX):"); if(!str) return;
     str = str.replace('SB-', '').trim();
-    let codeInt = parseInt(str, 36); if(isNaN(codeInt) || codeInt < 0 || codeInt >= 3200) { toast("Invalid code."); return; }
-    let rIdx = codeInt % 4; codeInt = Math.floor(codeInt / 4);
-    let mIdx = codeInt % 10; codeInt = Math.floor(codeInt / 10);
+    let codeInt = parseInt(str, 36); if(isNaN(codeInt) || codeInt < 0) { toast("Invalid code."); return; }
+    let rIdx = codeInt % 6; codeInt = Math.floor(codeInt / 6);
+    let mIdx = codeInt % 20; codeInt = Math.floor(codeInt / 20);
     let bIdx = codeInt % 8; codeInt = Math.floor(codeInt / 8);
     let pIdx = codeInt % 10;
     let tIdx = Math.floor(Math.random() * 10);
@@ -621,7 +597,7 @@
     updateHUD(); renderFleet(); toast("Aircraft commissioned via Trade Code!");
   }
 
-  /* ================= PROCEDURAL GENERATORS ================= */
+  /* ================= PROCEDURAL GENERATORS (400 Routes) ================= */
   function generateRoutes() {
     let rts = [];
     let roles = ["PAX", "CARGO", "VIP", "SPECIAL", "MIL", "SECRET"];
@@ -630,7 +606,8 @@
 
     roles.forEach(role => {
       let pool = AIRPORT_CAT[role] || AIRPORTS;
-      let count = role === "PAX" ? 50 : role === "CARGO" ? 40 : 30; 
+      // Double the route generation counts to reach ~400
+      let count = role === "PAX" ? 100 : role === "CARGO" ? 80 : 55; 
       for(let i=0; i<count; i++) {
         let a1, a2, pair;
         let attempts = 0;
@@ -813,6 +790,27 @@
     toast(`Crewed ${paired} aircraft.`); renderFleet(); renderPilots();
   }
 
+  function autoAssignRoutes() {
+    let unrouted = State.fleet.filter(p => !p.assignedRoute && p.status === 'READY');
+    let uRts = State.routes.filter(r => r.unlocked);
+    if(unrouted.length === 0 || uRts.length === 0) {
+      toast("No unrouted aircraft or licensed routes available."); return;
+    }
+    let routedCnt = 0;
+    unrouted.forEach(p => {
+      // Must match role constraints and range
+      let valid = uRts.filter(r => (r.role === p.role || r.role === 'PAX') && r.dist <= p.range);
+      if(valid.length > 0) {
+        // Sort to find the farthest route possible
+        valid.sort((a,b) => b.dist - a.dist);
+        p.assignedRoute = valid[0].id;
+        routedCnt++;
+      }
+    });
+    toast(`Auto-Routed ${routedCnt} aircraft to maximum range destinations.`);
+    renderFleet();
+  }
+
   function renderFleet() {
     const list = $('fleet-list'); if(!list) return; list.innerHTML = '';
     
@@ -826,15 +824,42 @@
     if(State.sortHangarMode==='tier') filtered.sort((a,b)=>b.tierIndex-a.tierIndex);
     if(State.sortHangarMode==='range') filtered.sort((a,b)=>b.range-a.range);
 
+    const uRts = State.routes.filter(r => r.unlocked);
+    
+    // CACHE DROPDOWNS TO PREVENT BROWSER FREEZING
+    let routeOptionsCache = {};
+    AIR_ROLES.forEach(role => {
+        let opts = `<option value="">-- Assign Route (${role}) --</option>`;
+        uRts.filter(r => r.role === role || r.role === 'PAX').forEach(r => {
+            let yieldM = 1.0 + (State.upgrades.mkt*0.05);
+            let baseYield = r.dist * 165 * yieldM;
+            let fuelD = 1.0; // Estimate without pilot
+            let baseFuelCost = ((r.dist * 0.22) * (1 - Math.min(0.7, State.upgrades.eng*0.02)) / fuelD) * State.fuelSpotPrice;
+            let net = baseYield - baseFuelCost;
+            opts += `<option value="${r.id}">${r.name} [${r.role}] (${r.dist} NM) | ~$${fmt(net)} Net</option>`;
+        });
+        routeOptionsCache[role] = opts;
+    });
+
+    // CACHE PILOTS
+    let pilotOpts = `<option value="">-- Assign Aviator --</option>`;
+    State.pilots.forEach(pl => { 
+        if(!pl.assignedTo) pilotOpts += `<option value="${pl.uid}">${pl.name} [${pl.bType}: +${fmt(pl.bonus)}%]</option>`; 
+    });
+
     filtered.forEach(p => {
       const c = document.createElement('div'); c.className = `plane-card ${p.status==='IN_FLIGHT'?'in-flight':p.condition<50?'damaged':''}`; c.style.borderColor = p.tierColor;
       
-      const uRts = State.routes.filter(r => r.unlocked && (r.role === p.role || r.role === 'PAX'));
-      let rtSel = `<select ${p.status==='IN_FLIGHT'?'disabled':''} onchange="assignRoute('${p.uid}', this.value)"><option value="">-- Assign Route (${p.role}) --</option>`;
-      uRts.forEach(r => { rtSel += `<option value="${r.id}" ${p.assignedRoute===r.id?'selected':''}>${r.name} [${r.role}] (${r.dist} NM)</option>`; }); rtSel += `</select>`;
+      let pOpts = routeOptionsCache[p.role];
+      if(p.assignedRoute) pOpts = pOpts.replace(`value="${p.assignedRoute}"`, `value="${p.assignedRoute}" selected`);
+      let rtSel = `<select ${p.status==='IN_FLIGHT'?'disabled':''} onchange="assignRoute('${p.uid}', this.value)">${pOpts}</select>`;
 
-      let piSel = `<select ${p.status==='IN_FLIGHT'?'disabled':''} onchange="assignPilot('${p.uid}', this.value)"><option value="">-- Assign Aviator --</option>`;
-      State.pilots.forEach(pl => { if(!pl.assignedTo || pl.assignedTo===p.uid) piSel += `<option value="${pl.uid}" ${p.assignedPilot===pl.uid?'selected':''}>${pl.name} [${pl.bType}: +${fmt(pl.bonus)}%]</option>`; }); piSel += `</select>`;
+      let pPilotOpts = pilotOpts;
+      if(p.assignedPilot) {
+          let pl = State.pilots.find(x=>x.uid === p.assignedPilot);
+          if(pl) pPilotOpts += `<option value="${pl.uid}" selected>${pl.name} [${pl.bType}: +${fmt(pl.bonus)}%]</option>`;
+      }
+      let piSel = `<select ${p.status==='IN_FLIGHT'?'disabled':''} onchange="assignPilot('${p.uid}', this.value)">${pPilotOpts}</select>`;
 
       c.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -955,11 +980,24 @@
     let filtered = State.filterRouteCat === 'ALL' ? State.routes : State.routes.filter(r => r.role === State.filterRouteCat);
 
     filtered.forEach(r => {
+      let yieldM = 1.0 + (State.upgrades.mkt*0.05);
+      let baseYield = r.dist * 165 * yieldM;
+      let fuelCost = ((r.dist * 0.22) * (1 - Math.min(0.7, State.upgrades.eng*0.02))) * State.fuelSpotPrice;
+      let netProfit = baseYield - fuelCost;
+
       const row = document.createElement('div'); row.className = 'route-row';
       row.innerHTML = `
-        <div>
+        <div style="flex:1;">
           <div style="font-weight:900; color:#fff;">${r.name} <span class="badge" style="margin-left:4px;">${r.role}</span></div>
-          <div style="font-size:9px; color:var(--silver-dim); font-family:monospace;">${r.dist.toLocaleString()} NM // Stage: ${r.minTier}</div>
+          <div style="font-size:9px; color:var(--silver-dim); font-family:monospace; margin-top:2px;">
+            ${r.dist.toLocaleString()} NM // Stage: ${r.minTier}
+          </div>
+          <div style="font-size:9px; color:var(--silver-dim); font-family:monospace; margin-top:2px;">
+            Yield: $${fmt(baseYield)} | Fuel: -$${fmt(fuelCost)}
+          </div>
+          <div style="font-size:10px; color:var(--status-green); font-weight:bold; font-family:monospace; margin-top:2px;">
+            Est. Net Profit: ~$${fmt(netProfit)}
+          </div>
         </div>
         <div>
           ${r.unlocked?`<span style="color:var(--status-green); font-weight:bold; font-family:monospace;">LICENSED ✓</span>`:`<button class="btn btn-silver" onclick="unlockRoute('${r.id}')">Lease ($${fmt(r.cost)})</button>`}
@@ -995,14 +1033,23 @@
   }
 
   function generateSideMissions() {
-    const templates = [
-      { id: "sm_mil", title: "Military Logistics Sortie", desc: "Dispatch a Government & Military (MIL) flight.", check: s => s.fleet.some(p => p.role === 'MIL' && p.status === 'IN_FLIGHT'), type: "cash", reward: 2500000 },
-      { id: "sm_sec", title: "Black Flight Escort", desc: "Dispatch a Top Secret (SECRET) airframe.", check: s => s.fleet.some(p => p.role === 'SECRET' && p.status === 'IN_FLIGHT'), type: "plane", reward: "Tier V Airframe" },
-      { id: "sm_long", title: "Transcontinental Transit", desc: "Have any airframe airborne on a route > 4,000 NM.", check: s => s.fleet.some(p => p.status === 'IN_FLIGHT' && s.routes.find(r=>r.id===p.assignedRoute)?.dist >= 4000), type: "fuel", reward: 150000 },
-      { id: "sm_pax", title: "Charter Run Surge", desc: "Maintain 3 or more simultaneous in-flight aircraft.", check: s => s.fleet.filter(p => p.status === 'IN_FLIGHT').length >= 3, type: "cash", reward: 1800000 },
-      { id: "sm_crew", title: "Full Complement", desc: "Assign aviators to all operational fleet airframes.", check: s => s.fleet.length >= 3 && s.fleet.every(p => p.assignedPilot !== null), type: "cash", reward: 1200000 }
-    ];
-    State.sideMissions = templates.sort(() => 0.5 - Math.random()).slice(0, 3);
+    let unlocked = State.routes.filter(r => r.unlocked);
+    if(unlocked.length === 0) unlocked = State.routes; 
+    
+    State.sideMissions = [];
+    for(let i=0; i<3; i++) {
+        let rt = unlocked[Math.floor(Math.random() * unlocked.length)];
+        State.sideMissions.push({
+            id: "sm_" + Date.now() + i,
+            title: `Contract: ${rt.name}`,
+            desc: `Dispatch a ${rt.role} class aircraft on ${rt.name}.`,
+            reqRoute: rt.id,
+            reqRole: rt.role,
+            readyToClaim: false,
+            rewardCash: Math.floor(rt.dist * 500) + 1000000,
+            rewardTier: Math.min(9, Math.floor(rt.dist / 1000))
+        });
+    }
   }
 
   function refreshSideMissions() {
@@ -1014,8 +1061,8 @@
   function renderSideMissions() {
     const list = $('side-missions-list'); if(!list) return; list.innerHTML = '';
     State.sideMissions.forEach((m, idx) => {
-      let isReady = m.check(State);
-      let rText = m.type === "cash" ? `+$${fmt(m.reward)}` : m.type === "fuel" ? `+${fmt(m.reward)} Gal Jet-A` : "+1x Mystery Airframe";
+      let isReady = m.readyToClaim;
+      let rText = `+$${fmt(m.rewardCash)} & T${m.rewardTier+1} Aircraft`;
       let div = document.createElement('div');
       div.className = `check-item ${isReady ? 'done' : ''}`;
       div.innerHTML = `
@@ -1034,18 +1081,30 @@
 
   function claimSideMission(idx) {
     let m = State.sideMissions[idx];
-    if(!m || !m.check(State)) return;
+    if(!m || !m.readyToClaim) return;
     
-    if(m.type === "cash") State.funds += m.reward;
-    if(m.type === "fuel") State.fuelReserve += m.reward;
-    if(m.type === "plane") {
-      let bonusPlane = constructPlane(4); // Free Tier V Heavy
-      State.fleet.push(bonusPlane);
-      toast(`Reward Airframe Commissioned: ${bonusPlane.name}!`);
-    }
+    State.funds += m.rewardCash;
+    let bonusPlane = constructPlane(m.rewardTier); 
+    State.fleet.push(bonusPlane);
+    toast(`Contract Paid! +$${fmt(m.rewardCash)} & ${bonusPlane.name} added!`);
 
-    toast(`Contract Awarded: ${m.title}!`);
     State.sideMissions.splice(idx, 1);
+    
+    // Replace the claimed mission immediately
+    let unlocked = State.routes.filter(r => r.unlocked);
+    if(unlocked.length === 0) unlocked = State.routes;
+    let rt = unlocked[Math.floor(Math.random() * unlocked.length)];
+    State.sideMissions.push({
+        id: "sm_" + Date.now(),
+        title: `Contract: ${rt.name}`,
+        desc: `Dispatch a ${rt.role} class aircraft on ${rt.name}.`,
+        reqRoute: rt.id,
+        reqRole: rt.role,
+        readyToClaim: false,
+        rewardCash: Math.floor(rt.dist * 500) + 1000000,
+        rewardTier: Math.min(9, Math.floor(rt.dist / 1000))
+    });
+
     updateHUD(); renderSideMissions();
   }
 
@@ -1140,15 +1199,25 @@
     let bRev = r.dist * 165 * yieldM;
     
     p.status='IN_FLIGHT'; p.flightStart=Date.now(); p.flightDuration=msTime; p.flightEnd=p.flightStart+msTime; p.expRev=bRev; p.wear=10/safeD;
+    
+    // MISSION CHECK UPON DISPATCH
+    State.sideMissions.forEach(m => {
+        if(!m.readyToClaim && p.assignedRoute === m.reqRoute && p.role === m.reqRole) {
+            m.readyToClaim = true;
+            toast(`Contract Objective Met: ${m.title}`);
+            if($('tab-checklist').classList.contains('active')) renderSideMissions();
+        }
+    });
+
     renderFleet(); updateHUD();
   }
   function dispatchAll() { State.fleet.filter(p=>p.status==='READY'&&p.assignedRoute&&p.assignedPilot).forEach(p=>dispatchFlight(p.uid)); }
   function maintainAirframe(pUid) { const p=State.fleet.find(x=>x.uid===pUid); if(!p||p.status==='IN_FLIGHT')return; let c=Math.floor((100-p.condition)*2500); if(State.funds<c)return; State.funds-=c; p.condition=100; updateHUD(); renderFleet(); }
   function maintainAll() { let c=0; State.fleet.filter(p=>p.condition<90&&p.status!=='IN_FLIGHT').forEach(p=>c+=Math.floor((100-p.condition)*2500)); if(c===0||State.funds<c)return; State.funds-=c; State.fleet.forEach(p=>p.condition=100); updateHUD(); renderFleet(); }
 
-  /* ================= UNIVERSAL AUCTIONS ================= */
+  /* ================= UNIVERSAL AUCTIONS (10 LANES) ================= */
   function initAuction(uid, type) {
-    if(State.auctions.length>=5){toast("Lanes full.");return;}
+    if(State.auctions.length>=10){toast("Lanes full.");return;}
     let item;
     if(type==='plane') { let i=State.fleet.findIndex(x=>x.uid===uid); if(i===-1)return; item=State.fleet[i]; if(item.assignedPilot){ let px=State.pilots.find(x=>x.uid===item.assignedPilot); if(px)px.assignedTo=null; } State.fleet.splice(i,1); }
     if(type==='pilot') { let i=State.pilots.findIndex(x=>x.uid===uid); if(i===-1)return; item=State.pilots[i]; State.pilots.splice(i,1); }
@@ -1158,8 +1227,9 @@
   }
   
   function fillAuctions(type) {
-    let a=5-State.auctions.length; if(a<=0) { toast("Lanes full."); return; }
+    let a=10-State.auctions.length; if(a<=0) { toast("Lanes full."); return; }
     
+    // Sort strictly by value ASCENDING (Lowest Value First)
     let c = type==='planes' 
       ? State.fleet.filter(p=>p.status==='READY'&&!p.assignedPilot).sort((x,y)=>x.value-y.value) 
       : State.pilots.filter(p=>!p.assignedTo&&!p.locked).sort((x,y)=>x.value-y.value);
@@ -1279,7 +1349,7 @@
   }
 
   function initUI() {
-    if(!State.routes || State.routes.length < 200) State.routes = generateRoutes();
+    if(!State.routes || State.routes.length < 400) State.routes = generateRoutes();
     if(!State.sideMissions || State.sideMissions.length === 0) generateSideMissions();
     updateHUD(); refreshMarket(); updateAutomationUI(); renderUpgrades();
     if(globalInterval) clearInterval(globalInterval); globalInterval = setInterval(gameTick, 100);
